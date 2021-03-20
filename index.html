@@ -36,9 +36,18 @@
       vuetify: new Vuetify(),
       data() {
           return {
-
+              count: 5,
+              raw_tweet_info: ''
           }
       },
+      mounted: function() {
+          // when the vue instance is put onto the dom
+          axios.get(`https://stark-retreat-10586.herokuapp.com/all-tweets?count=${this.count}`).then((response) => {
+              console.log(response.data)
+          }).catch((err) => {
+              console.log("Whoopsie! There was an error! " + JSON.stringify(err))
+          })
+      }
     })
   </script>
 </body>
