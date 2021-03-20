@@ -65,25 +65,24 @@
 
             <v-row>
                 <v-col>
-                    <v-card class="mx-auto">
+                    <v-card flat class="pa-2" v-for="listing in relevantOpenings" :key="listing.title" class="mx-auto">
                         <v-card-title>
-                            <span> Job Title </span>
+                            <span> {{ listing.title }} </span>
                         </v-card-title>
 
                         <v-card-subtitle>
-                            <span>tags go here!</span>
+                            <span><a :href="listing.link" style="text-decoration: none">Tweet Reference</a></span>
                         </v-card-subtitle>
 
                         <v-card-text>
                           <div class="text--primary">
-                            job description goes here!
+                                {{ listing.description }}
                           </div>
                         </v-card-text>
 
                         <v-card-actions>
                           <v-chip-group multiple>
-                              <v-chip> Something  </v-chip>
-                              <v-chip> Something else  </v-chip>
+                              <v-chip v-for="tag in listing.tags"> {{tag}} </v-chip>
                           </v-chip-group>
                         </v-card-actions>
                     </v-card>
@@ -99,6 +98,7 @@
   <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
 
   <script>
     new Vue({
@@ -110,7 +110,7 @@
               raw_tweet_info: '',
               updatedLast: Math.floor(Math.random() * Math.floor(20)),
               search: null,
-              select: null,
+              select: [],
               loading: false,
               items: [],
               tags: ['Women', 
@@ -135,9 +135,62 @@
                     'Senior Engineer',
                     'Creative',
                     'Project Manager'],
-               jobListings: [{
-                   
-               }]
+               jobListings: [
+                   {
+                        title: "Hiring Manager",
+                        description: "Hiring manager for a novel unicorn start up with nearly a billon dollar invested! No degree required!",
+                        link: "https://t.co/f4aq3p4ehh",
+                        tags: ['Full Time', 'No Degree Required']
+                   },
+                   {
+                        title: "Senior Software Engineer",
+                        description: "Looking for a Female Tech lead to enrich the enviornment at a young start up.",
+                        link: "https://t.co/f4aq3p4ehh",
+                        tags: ['Women', 'Full Time']
+                   },
+                   {
+                        title: "UI Designer",
+                        description: "Looking for a Female UI Designer with experience in graphic design and story telling.",
+                        link: "https://t.co/f4aq3p4ehh",
+                        tags: ['Creative', 'Women', 'Full Time']
+                   },
+                   {
+                        title: "UX Story Designer",
+                        description: "Female UX Designer and Storyteller. Must empathize with customers and understand their needs",
+                        link: "https://t.co/f4aq3p4ehh",
+                        tags: ['Women', 'No Degree Required']
+                   },
+                   {
+                        title: "Hedge Fund Manager",
+                        description: "Fast paced enviornment. Looking for competency.",
+                        link: "https://t.co/f4aq3p4ehh",
+                        tags: ['Women', 'Computer Science']
+                   },
+                   {
+                        title: "Cybersecurity Consultant",
+                        description: "10-12 years in the field is preferred. ",
+                        link: "https://t.co/f4aq3p4ehh",
+                        tags: ['Cyber-security', 'Internet Technologies']
+                   },
+                   {
+                        title: "Healthcare Policy Advisory",
+                        description: "Must have experience in the healthcare profession in some capacity ",
+                        link: "https://t.co/f4aq3p4ehh",
+                        tags: ['Tech Entrepreneurship', 'Health', 'Healthcare', 'Internet Technologies']
+                   },
+                   {
+                        title: "Local Economist",
+                        description: "10-12 years in the field is preferred. Preferring Female Candidates",
+                        link: "https://t.co/f4aq3p4ehh",
+                        tags: ['Policies', 'Women']
+                   },
+                   {
+                        title: "Animation Designer",
+                        description: "10-12 years in the field is preferred. ",
+                        link: "https://t.co/f4aq3p4ehh",
+                        tags: ['Entry Level', 'Creative']
+                   },
+               ]
           }
       },
       watch: {
@@ -150,6 +203,25 @@
               this.items = this.tags.filter(e => {
                 return (e || '').toLowerCase().indexOf((v || '').toLowerCase()) > -1
               })
+          }
+      },
+      computed: {
+          relevantOpenings: function () {
+              var validEntries = this.jobListings
+
+              if (this.select.length === 0){
+                  return validEntries
+              }
+
+              for(var i = 0; i < validEntries.length; i++){
+                const filteredArray = validEntries[i].tags.filter(value => this.select.includes(value));
+                // if it is empty get rid of the elem
+                if(filteredArray.length === 0){
+                    validEntries.splice(i, 1) // remove
+                }
+              }
+
+              return validEntries
           }
       }
     })
