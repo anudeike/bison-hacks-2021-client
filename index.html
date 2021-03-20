@@ -9,17 +9,87 @@
 <body>
   <div id="app">
     <v-app id="inpsire">
+        <!-- logos an such can go here -->
+        <v-app-bar app absolute color="white" elevate-on-scroll scroll-target="#scrolling-techniques-7">
+            <v-app-bar-nav-icon></v-app-bar-nav-icon>
+            <v-spacer></v-spacer>
+            <!-- center in html -->
+            <v-toolbar-title>Opportunity Engine!</v-toolbar-title>
+      
+            <v-spacer></v-spacer>
+      
+        </v-app-bar>
+
       <v-main>
         <v-container fluid>
+
+            <!-- center this later! -->
             <v-row>
                 <v-col>
-                    <v-card>
+                    <v-card flat color="grey lighten-4">
                         <v-card-title>
-                            Hello!
+                            <span class="display-1 font-weight-light">Search our database of Job Openings!</span>
                         </v-card-title>
+                        <v-card-subtitle>
+                            <span class="headline font-weight-light">Pulled directly from Twitter {{ updatedLast }} seconds ago!</span>
+                        </v-card-subtitle>
                     </v-card>
                 </v-col>
             </v-row>
+
+            <v-row>
+                <v-col>
+                    <v-card flat>
+                        <v-toolbar>
+                            <v-toolbar-title> Search a Topic </v-toolbar-title>
+                            <v-autocomplete
+                                v-model="select"
+                                :loading="loading"
+                                :items="items"
+                                :search-input.sync="search"
+                                cache-items
+                                class="mx-4"
+                                flat
+                                hide-no-data
+                                hide-details
+                                label="What type of position are you looking for?"
+                                solo-inverted
+                                chips
+                                deletable-chips
+                                multiple
+                            ></v-autocomplete>
+                        </v-toolbar>
+                    </v-card>
+                </v-col>
+            </v-row>
+
+            <v-row>
+                <v-col>
+                    <v-card class="mx-auto">
+                        <v-card-title>
+                            <span> Job Title </span>
+                        </v-card-title>
+
+                        <v-card-subtitle>
+                            <span>tags go here!</span>
+                        </v-card-subtitle>
+
+                        <v-card-text>
+                          <div class="text--primary">
+                            job description goes here!
+                          </div>
+                        </v-card-text>
+
+                        <v-card-actions>
+                          <v-chip-group multiple>
+                              <v-chip> Something  </v-chip>
+                              <v-chip> Something else  </v-chip>
+                          </v-chip-group>
+                        </v-card-actions>
+                    </v-card>
+                </v-col>
+            </v-row>
+
         </v-container>
       </v-main>
     </v-app>
@@ -37,16 +107,50 @@
       data() {
           return {
               count: 5,
-              raw_tweet_info: ''
+              raw_tweet_info: '',
+              updatedLast: Math.floor(Math.random() * Math.floor(20)),
+              search: null,
+              select: null,
+              loading: false,
+              items: [],
+              tags: ['Women', 
+                    'STEM', 
+                    'Health', 
+                    'Healthcare', 
+                    'Computer Science',
+                    'IT',
+                    'Internet Technologies',
+                    'Cyber-security',
+                    'Business',
+                    'Public Policy',
+                    'Health Policy',
+                    'Policies',
+                    'Tech Entrepreneurship',
+                    'Internship',
+                    'Full Time',
+                    'Returnship', 
+                    'No Degree Required',
+                    'Bootcamp',
+                    'Entry Level',
+                    'Senior Engineer',
+                    'Creative',
+                    'Project Manager'],
+               jobListings: [{
+                   
+               }]
           }
       },
-      mounted: function() {
-          // when the vue instance is put onto the dom
-          axios.get(`https://stark-retreat-10586.herokuapp.com/all-tweets?count=${this.count}`).then((response) => {
-              console.log(response.data)
-          }).catch((err) => {
-              console.log("Whoopsie! There was an error! " + JSON.stringify(err))
-          })
+      watch: {
+          search(val) {
+              val && val !== this.select && this.querySelections(val)
+          }
+      },
+      methods: {
+          querySelections (v) {
+              this.items = this.tags.filter(e => {
+                return (e || '').toLowerCase().indexOf((v || '').toLowerCase()) > -1
+              })
+          }
       }
     })
   </script>
